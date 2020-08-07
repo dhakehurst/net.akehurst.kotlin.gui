@@ -1,9 +1,9 @@
 package net.akehurst.kotlin.gui.examples.hello.world
 
-import net.akehurst.kotlin.gui.api.GuiFactory
+import net.akehurst.kotlin.gui.api.*
 
 class Application(
-        val factory: GuiFactory
+        val factory:GuiFactory
 ) {
 
     val gui = Gui(factory)

@@ -27,22 +27,28 @@ class GuiWindowJfx : GuiWindow {
             stage.title = value
         }
 
-    override val content: MutableList<GuiControl> = object : ArrayList<GuiControl>() {
-        override fun add(element: GuiControl): Boolean {
-            when (element) {
-                is GuiControlJfx -> root.children.add(element.jfx)
-                else -> error("$element is not a GuiControlJfx")
+    override val content: MutableList<GuiControl> = mutableListOf()
+
+    override fun addContent(element: GuiControl) {
+        when (element) {
+            is GuiControlJfx -> {
+                root.children.add(element.jfx)
+                content.add(element)
             }
-            return super.add(element)
+            else -> error("$element is not a GuiControlJfx")
         }
 
-        override fun remove(element: GuiControl): Boolean {
-            when (element) {
-                is GuiControlJfx -> root.children.remove(element.jfx)
-                else -> error("$element is not a GuiControlJfx")
+    }
+
+    override fun removeContent(element: GuiControl) {
+        when (element) {
+            is GuiControlJfx -> {
+                root.children.remove(element.jfx)
+                content.remove(element)
             }
-            return super.remove(element)
+            else -> error("$element is not a GuiControlJfx")
         }
+
     }
 
     override fun show() {
