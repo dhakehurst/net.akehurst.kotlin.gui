@@ -24,6 +24,10 @@ class GuiFactoryHtml : GuiFactory {
         TODO("not implemented")
     }
 
+    override fun createPanel(container: GuiContainer): GuiPanel {
+        TODO("not implemented")
+    }
+
     override fun createProgressBar(container: GuiContainer): GuiProgressBar {
         TODO("not implemented")
     }

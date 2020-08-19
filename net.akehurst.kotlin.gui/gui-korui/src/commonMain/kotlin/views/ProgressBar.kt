@@ -6,7 +6,7 @@ import com.soywiz.korge.ui.DefaultUISkin
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.ninePatch
 
-class ProgressBar : Container() {
+class ProgressBar : UIWidget() {
 
     val rect = ninePatch(DefaultUISkin.normal, width, height, 10.0 / 64.0, 10.0 / 64.0, 54.0 / 64.0, 54.0 / 64.0)
 

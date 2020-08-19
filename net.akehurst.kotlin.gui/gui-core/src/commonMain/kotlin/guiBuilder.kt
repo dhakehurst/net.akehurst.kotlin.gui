@@ -2,8 +2,8 @@ package net.akehurst.kotlin.gui.core
 
 import net.akehurst.kotlin.gui.api.*
 
-fun guiWindow(factory: GuiFactory, title: String, init: WindowBuilder.() -> Unit): GuiWindow {
-    val b = WindowBuilder(factory, title)
+fun guiWindow(factory: GuiFactory, title: String, width: Double, height: Double, init: WindowBuilder.() -> Unit): GuiWindow {
+    val b = WindowBuilder(factory, title, width, height)
     b.init()
     return b.build()
 }
@@ -13,88 +13,107 @@ annotation class GuiBuilderDsl
 
 @GuiBuilderDsl
 class WindowBuilder(
-        factory: GuiFactory,
-        val title: String
-) : ContainerBuilder(factory) {
+        val factory: GuiFactory,
+        val title: String,
+        val width: Double,
+        val height: Double
+) {
 
-    override fun build(container: GuiContainer) : GuiWindow {
-        error("Call build with no argument to build GuiWindow")
+    val control = factory.createWindow()
+
+    fun panel(init: PanelBuilder.() -> Unit = {}): GuiPanel {
+        val b = PanelBuilder(factory, this.control)
+        b.init()
+        return b.build()
     }
 
-    fun build() : GuiWindow {
-        val result = factory.createWindow()
-        result.title = title
-        content.forEach {
-            val control = it.build(result)
-        }
-        return result
+    fun build(): GuiWindow {
+        this.control.width = width
+        this.control.height = height
+        return this.control
     }
 }
 
 @GuiBuilderDsl
 abstract class ControlBuilder(
-        val factory: GuiFactory
+        val factory: GuiFactory,
+        val container: GuiContainer
 ) {
-    abstract fun build(container: GuiContainer) : GuiControl
+    abstract val control: GuiControl
+
+    abstract fun build(): GuiControl
 }
 
 @GuiBuilderDsl
 abstract class ContainerBuilder(
-        factory: GuiFactory
-) : ControlBuilder(factory) {
+        factory: GuiFactory,
+        container: GuiContainer
+) : ControlBuilder(factory, container) {
 
-    val content = mutableListOf<ControlBuilder>()
+    abstract override val control: GuiContainer
 
-    fun button(label: String, init: ButtonBuilder.() -> Unit = {}) {
-        val b = ButtonBuilder(factory, label)
+    fun button(label: String, init: ButtonBuilder.() -> Unit = {}): GuiButton {
+        val b = ButtonBuilder(factory, this.control, label)
         b.init()
-        content.add(b)
+        return b.build()
     }
 
-    fun dialog(title: String, init: DialogBuilder.() -> Unit = {}) {
-        val b = DialogBuilder(factory, title)
+    fun dialog(title: String, init: DialogBuilder.() -> Unit = {}): GuiDialog {
+        val b = DialogBuilder(factory, this.control, title)
         b.init()
-        content.add(b)
+        return b.build()
     }
 
-    fun progressBar(init: ProgressBarBuilder.() -> Unit = {}) {
-        val b = ProgressBarBuilder(factory)
+    fun progressBar(init: ProgressBarBuilder.() -> Unit = {}): GuiProgressBar {
+        val b = ProgressBarBuilder(factory, this.control)
         b.init()
-        content.add(b)
+        return b.build()
     }
 
-    fun text(text: String, init: TextBuilder.() -> Unit = {}) {
-        val b = TextBuilder(factory, text)
+    fun text(text: String, init: TextBuilder.() -> Unit = {}): GuiText {
+        val b = TextBuilder(factory, this.control, text)
         b.init()
-        content.add(b)
+        return b.build()
     }
 
-    fun textEditor(text: String, init: TextEditorBuilder.() -> Unit = {}) {
-        val b = TextEditorBuilder(factory, text)
+    fun textEditor(text: String, init: TextEditorBuilder.() -> Unit = {}): GuiTextEditor {
+        val b = TextEditorBuilder(factory, this.control, text)
         b.init()
-        content.add(b)
+        return b.build()
     }
 
-    abstract override fun build(container: GuiContainer) : GuiContainer
+    abstract override fun build(): GuiContainer
 }
 
 @GuiBuilderDsl
 class ButtonBuilder(
         factory: GuiFactory,
-        val label: String
-) : ControlBuilder(factory) {
+        container: GuiContainer,
+        val label: String,
+        val width: Double = 50.0,
+        val height: Double = 30.0
+) : ControlBuilder(factory, container) {
 
-    var onPress = {}
+    override val control = factory.createButton(container)
 
-    fun onPress(action: () -> Unit) {
-        onPress = action
+    var onPressed = {}
+    var onReleased = {}
+
+    fun onPressed(action: () -> Unit) {
+        onPressed = action
     }
 
-    override fun build(container: GuiContainer) : GuiButton {
-        val result = factory.createButton(container)
-        result.label = label
-        result.onPress = onPress
-        return result
+    fun onReleased(action: () -> Unit) {
+        onReleased = action
+    }
+
+    override fun build(): GuiButton {
+        control.label = label
+        control.width = width
+        control.height = height
+        control.onPressed = onPressed
+        control.onReleased = onReleased
+        return control
     }
 
 }
@@ -102,30 +121,44 @@ class ButtonBuilder(
 @GuiBuilderDsl
 class DialogBuilder(
         factory: GuiFactory,
-        val title: String
-) : ContainerBuilder(factory) {
+        container: GuiContainer,
+        val title: String,
+        val width: Double = 200.0,
+        val height: Double = 150.0
+) : ControlBuilder(factory, container) {
 
-    override fun build(container: GuiContainer) : GuiDialog {
-        val result = factory.createDialog(container)
-        result.title = title
-        content.forEach {
-            val control = it.build(result)
-        }
-        return result
+    override val control = factory.createDialog(container)
+
+    fun panel(init: PanelBuilder.() -> Unit = {}): GuiPanel {
+        val b = PanelBuilder(factory, this.control)
+        b.init()
+        return b.build()
     }
 
+    override fun build(): GuiDialog {
+        this.control.title = title
+        control.width = width
+        control.height = height
+        return this.control
+    }
 }
 
 @GuiBuilderDsl
 class TextBuilder(
         factory: GuiFactory,
-        val text: String
-) : ControlBuilder(factory) {
+        container: GuiContainer,
+        val text: String,
+        val width: Double = 50.0,
+        val height: Double = 30.0
+) : ControlBuilder(factory, container) {
 
-    override fun build(container: GuiContainer) : GuiText {
-        val result = factory.createText(container)
-        result.text = text
-        return result
+    override val control = factory.createText(container)
+
+    override fun build(): GuiText {
+        control.text = text
+        control.width = width
+        control.height = height
+        return control
     }
 
 }
@@ -133,25 +166,55 @@ class TextBuilder(
 @GuiBuilderDsl
 class TextEditorBuilder(
         factory: GuiFactory,
-        val text: String
-) : ControlBuilder(factory) {
+        container: GuiContainer,
+        val text: String,
+        val width: Double = 50.0,
+        val height: Double = 30.0
+) : ControlBuilder(factory, container) {
 
-    override fun build(container: GuiContainer) : GuiTextEditor {
-        val result = factory.createTextEditor(container)
-        result.text = text
-        return result
+    override val control = factory.createTextEditor(container)
+
+    override fun build(): GuiTextEditor {
+        control.text = text
+        control.width = width
+        control.height = height
+        return control
+    }
+
+}
+
+@GuiBuilderDsl
+class PanelBuilder(
+        factory: GuiFactory,
+        container: GuiContainer,
+        val width: Double = 50.0,
+        val height: Double = 30.0
+) : ContainerBuilder(factory, container) {
+
+    override val control = factory.createPanel(container)
+
+    override fun build(): GuiPanel {
+        control.width = width
+        control.height = height
+        return control
     }
 
 }
 
 @GuiBuilderDsl
 class ProgressBarBuilder(
-        factory: GuiFactory
-) : ControlBuilder(factory) {
+        factory: GuiFactory,
+        container: GuiContainer,
+        val width: Double = 50.0,
+        val height: Double = 30.0
+) : ControlBuilder(factory, container) {
 
-    override fun build(container: GuiContainer) : GuiProgressBar {
-        val result = factory.createProgressBar(container)
-        return result
+    override val control = factory.createProgressBar(container)
+
+    override fun build(): GuiProgressBar {
+        control.width = width
+        control.height = height
+        return control
     }
 
 }

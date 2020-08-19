@@ -4,7 +4,7 @@ import com.soywiz.korge.view.View
 import net.akehurst.kotlin.gui.api.GuiProgressBar
 import net.akehurst.kotlin.gui.korui.views.ProgressBar
 
-class GuiProgressBarKorui : GuiProgressBar, GuiControlKorui {
+class GuiProgressBarKorui : GuiProgressBar, GuiControlKoruiAbstract() {
 
     override val korui = ProgressBar()
 

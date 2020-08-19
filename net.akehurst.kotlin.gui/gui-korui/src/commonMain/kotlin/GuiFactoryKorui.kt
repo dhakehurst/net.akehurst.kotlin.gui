@@ -34,6 +34,11 @@ class GuiFactoryKorui : GuiFactory {
         TODO("not implemented")
     }
 
+    override fun createPanel(container: GuiContainer): GuiPanel {
+        val el = GuiPanelKorui()
+        container.addContent(el)
+        return el
+    }
     override fun createProgressBar(container: GuiContainer): GuiProgressBar {
         val el = GuiProgressBarKorui()
         container.addContent(el)

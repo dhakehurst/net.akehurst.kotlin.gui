@@ -2,11 +2,12 @@ package net.akehurst.kotlin.gui.api
 
 interface GuiFactory {
     fun createWindow(): GuiWindow
-    fun createDialog(container: GuiContainer) : GuiDialog
+    fun createDialog(container: GuiContainer): GuiDialog
 
     fun createButton(container: GuiContainer): GuiButton
     fun createText(container: GuiContainer): GuiText
     fun createTextEditor(container: GuiContainer): GuiTextEditor
+    fun createPanel(container: GuiContainer): GuiPanel
     fun createProgressBar(container: GuiContainer): GuiProgressBar
 
 
@@ -17,10 +18,14 @@ interface GuiWindow : GuiContainer {
     var title: String
 
     fun show()
+
 }
 
 interface GuiControl {
+    var width: Double
+    var height: Double
 
+    fun applyLayout(guiLayout: GuiLayout)
 }
 
 interface GuiContainer : GuiControl {
@@ -36,11 +41,13 @@ interface GuiDialog : GuiContainer {
     var title: String
 
     fun show(modal: Boolean = true)
+    fun close()
 }
 
 interface GuiButton : GuiControl {
-    var label : String
-    var onPress : ()->Unit
+    var label: String
+    var onPressed: () -> Unit
+    var onReleased: () -> Unit
 }
 
 interface GuiText : GuiControl {
@@ -49,6 +56,10 @@ interface GuiText : GuiControl {
 
 interface GuiTextEditor : GuiControl {
     var text: String
+}
+
+interface GuiPanel : GuiContainer {
+
 }
 
 interface GuiProgressBar : GuiControl {

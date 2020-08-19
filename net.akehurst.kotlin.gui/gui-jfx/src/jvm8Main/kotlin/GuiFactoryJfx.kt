@@ -17,15 +17,27 @@ class GuiFactoryJfx : GuiFactory {
 
 
     override fun createButton(container: GuiContainer): GuiButton {
-        TODO("not implemented")
+        val el = GuiButtonJfx()
+        container.addContent(el)
+        return el
     }
 
     override fun createDialog(container: GuiContainer): GuiDialog {
-        TODO("not implemented")
+        val el = GuiDialogJfx()
+        //container.addContent(el)
+        return el
+    }
+
+    override fun createPanel(container: GuiContainer): GuiPanel {
+        val el = GuiPanelJfx()
+        container.addContent(el)
+        return el
     }
 
     override fun createProgressBar(container: GuiContainer): GuiProgressBar {
-        TODO("not implemented")
+        val el = GuiProgressBarJfx()
+        container.addContent(el)
+        return el
     }
 
     override fun createText(container: GuiContainer): GuiText {

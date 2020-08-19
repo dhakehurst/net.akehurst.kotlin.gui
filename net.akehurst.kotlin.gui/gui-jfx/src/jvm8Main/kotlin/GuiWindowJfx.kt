@@ -7,17 +7,19 @@ import javafx.stage.Stage
 import net.akehurst.kotlin.gui.api.GuiControl
 import net.akehurst.kotlin.gui.api.GuiWindow
 
-class GuiWindowJfx : GuiWindow {
+class GuiWindowJfx : GuiContainerJfxAbstract(), GuiWindow {
 
     private lateinit var stage: Stage
-    private lateinit var root: FlowPane
+    override lateinit var jfx: FlowPane
     private lateinit var scene: Scene
 
     init {
         runOnJfxThreadAndWait {
             stage = Stage()
-            root = FlowPane()
-            scene = Scene(root)
+            jfx = FlowPane()  //TODO: use Pane
+            scene = Scene(jfx)
+            stage.scene = scene
+            stage.sizeToScene()
         }
     }
 
@@ -27,35 +29,10 @@ class GuiWindowJfx : GuiWindow {
             stage.title = value
         }
 
-    override val content: MutableList<GuiControl> = mutableListOf()
-
-    override fun addContent(element: GuiControl) {
-        when (element) {
-            is GuiControlJfx -> {
-                root.children.add(element.jfx)
-                content.add(element)
-            }
-            else -> error("$element is not a GuiControlJfx")
-        }
-
-    }
-
-    override fun removeContent(element: GuiControl) {
-        when (element) {
-            is GuiControlJfx -> {
-                root.children.remove(element.jfx)
-                content.remove(element)
-            }
-            else -> error("$element is not a GuiControlJfx")
-        }
-
-    }
-
     override fun show() {
         Platform.runLater(Runnable {
             try {
-                stage.setScene(scene)
-                stage.sizeToScene()
+
                 stage.showAndWait()
 
 //					gc = canvas.getGraphicsContext2D();
@@ -65,5 +42,18 @@ class GuiWindowJfx : GuiWindow {
             }
         })
     }
+
+
+
+
+
+    // --- GuiControl ---
+
+    override var width: Double
+        get() = jfx.width
+        set(value) {jfx.prefWidth = value}
+    override var height: Double
+        get() = jfx.height
+        set(value) {jfx.prefHeight = value}
 
 }

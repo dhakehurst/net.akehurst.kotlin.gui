@@ -4,18 +4,21 @@ import com.soywiz.korge.input.mouse
 import com.soywiz.korge.ui.DefaultUISkin
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.ninePatch
+import com.soywiz.korge.view.roundRect
 import com.soywiz.korge.view.text
 import com.soywiz.korim.color.Colors
+import com.soywiz.korma.geom.vector.circle
 
-class Button : Container() {
+class Button : UIWidget() {
 
-    val text = text("",16.0, Colors.BLACK)
-    val rect = ninePatch(DefaultUISkin.normal, width, height, 10.0 / 64.0, 10.0 / 64.0, 54.0 / 64.0, 54.0 / 64.0)
+    val rect = roundRect(width, height,5.0,5.0,Colors.SLATEGRAY)
+    val text = text("Button",16.0, Colors.WHITE)
+//    val rect = ninePatch(DefaultUISkin.normal, width, height, 10.0 / 64.0, 10.0 / 64.0, 54.0 / 64.0, 54.0 / 64.0)
 
     var onOver = {}
     var onOut = {}
-    var onPressedDown = {}
-    var onPressedUp = {}
+    var onPressed = {}
+    var onReleased = {}
 
     init {
         mouse {
@@ -26,12 +29,13 @@ class Button : Container() {
                 onOut()
             }
             onDown {
-                onPressedDown()
+                onPressed()
             }
-            onUpAnywhere {
-                onPressedUp()
+            onUp {
+                onReleased()
             }
         }
+
     }
 
 
