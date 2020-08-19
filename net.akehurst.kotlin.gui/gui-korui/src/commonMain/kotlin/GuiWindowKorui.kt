@@ -14,7 +14,8 @@ import net.akehurst.kotlin.gui.korui.views.Window
 class GuiWindowKorui : GuiWindow, GuiContainerKoruiAbstract() {
 
     private val window = Window()
-    override val korui = window.content
+    //override val korui = window.content
+    override val korui3D = window.content3D
 
     override var title: String
         get() = TODO("not implemented")

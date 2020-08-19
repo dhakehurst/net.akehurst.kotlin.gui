@@ -60,6 +60,7 @@ subprojects {
             val main by compilations.getting {
                 kotlinOptions {
                     jvmTarget = JavaVersion.VERSION_1_8.toString()
+                    freeCompilerArgs += "-Xuse-experimental=com.soywiz.korge3d.Korge3DExperimental"
                 }
             }
             val test by compilations.getting {

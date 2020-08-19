@@ -9,7 +9,7 @@ import net.akehurst.kotlin.gui.korui.views.Panel
 class GuiPanelKorui : GuiContainerKoruiAbstract(), GuiPanel {
 
     // --- GuiControlKorui ---
-    override val korui = Panel()
+    override val korui3D = Panel()
 
 
 

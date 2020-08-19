@@ -97,6 +97,7 @@ class GuiTest {
                 guiLayout(GuiLayoutFactorySimple()) {
                     rule("*") {
                         declaration("display", "flex")
+                        declaration("depth", "10.0")
                     }
                 }
         )

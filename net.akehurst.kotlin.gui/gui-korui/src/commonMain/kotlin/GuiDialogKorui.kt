@@ -6,7 +6,7 @@ import net.akehurst.kotlin.gui.korui.views.Dialog
 
 class GuiDialogKorui : GuiDialog, GuiContainerKoruiAbstract() {
 
-    override val korui = Dialog()
+    override val korui3D = Dialog()
 
 
     // --- GuiDialog ---

@@ -5,20 +5,19 @@ import net.akehurst.kotlin.gui.korui.views.Button
 
 class GuiButtonKorui : GuiButton, GuiControlKoruiAbstract() {
 
-    override val korui = Button()
-
+    override val korui3D = Button()
 
     override var label: String
-        get() = korui.text.text
-        set(value) {korui.text.text = value}
+        get() = korui3D.text.text
+        set(value) {korui3D.text.text = value}
 
     override var onPressed: () -> Unit
-        get() = korui.onPressed
-        set(value) { korui.onPressed = value }
+        get() = korui3D.onPressed
+        set(value) { korui3D.onPressed = value }
 
     override var onReleased: () -> Unit
-        get() = korui.onReleased
-        set(value) { korui.onReleased = value }
+        get() = korui3D.onReleased
+        set(value) { korui3D.onReleased = value }
 
 
 }

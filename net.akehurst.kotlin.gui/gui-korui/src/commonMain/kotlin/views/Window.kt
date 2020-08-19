@@ -17,8 +17,12 @@ import com.soywiz.korge.scene.Module
 import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.stat.Stats
 import com.soywiz.korge.time.toTimeProvider
+import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.Views
 import com.soywiz.korge.view.addTo
+import com.soywiz.korge3d.addTo
+import com.soywiz.korge3d.box
+import com.soywiz.korge3d.scene3D
 import com.soywiz.korgw.CreateDefaultGameWindow
 import com.soywiz.korgw.GameWindow
 import com.soywiz.korgw.configure
@@ -76,12 +80,14 @@ class Window(
 
     var isVisible = false
 
-    val content = UIWidget()
-
-    init {
-        content.width = width.toDouble()
-        content.height = height.toDouble()
+    val content = object: Container() {
+        override var width: Double = this@Window.width.toDouble()
+        override var height: Double = this@Window.height.toDouble()
     }
+    val stage3DView = content.scene3D {
+    }
+    val content3D = UIContainer().addTo(stage3DView.stage3D)
+
 
     suspend fun start() {
         val window = this

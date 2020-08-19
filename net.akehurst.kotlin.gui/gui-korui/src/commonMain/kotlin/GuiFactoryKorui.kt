@@ -25,7 +25,7 @@ class GuiFactoryKorui : GuiFactory {
 
     override fun createText(container: GuiContainer): GuiText {
         val el = GuiTextKorui()
-        el.korui.format = Html.Format(color = Colors["#000000"], face = Html.FontFace.Bitmap(Fonts.defaultFont), size = 16)
+        el.korui3D.format = Html.Format(color = Colors["#000000"], face = Html.FontFace.Bitmap(Fonts.defaultFont), size = 16)
         container.addContent(el)
         return el
     }

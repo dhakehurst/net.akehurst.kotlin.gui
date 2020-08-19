@@ -6,7 +6,7 @@ import net.akehurst.kotlin.gui.korui.views.ProgressBar
 
 class GuiProgressBarKorui : GuiProgressBar, GuiControlKoruiAbstract() {
 
-    override val korui = ProgressBar()
+    override val korui3D = ProgressBar()
 
     override var progress: Double = 0.0
 

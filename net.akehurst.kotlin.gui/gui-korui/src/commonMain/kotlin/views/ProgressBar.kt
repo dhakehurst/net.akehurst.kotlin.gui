@@ -8,7 +8,7 @@ import com.soywiz.korge.view.ninePatch
 
 class ProgressBar : UIWidget() {
 
-    val rect = ninePatch(DefaultUISkin.normal, width, height, 10.0 / 64.0, 10.0 / 64.0, 54.0 / 64.0, 54.0 / 64.0)
+    //val rect = ninePatch(DefaultUISkin.normal, width, height, 10.0 / 64.0, 10.0 / 64.0, 54.0 / 64.0, 54.0 / 64.0)
 
 
 }
