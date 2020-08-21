@@ -12,9 +12,9 @@ open class UIWidget(
 
 ) : Container3D() {
 
-    var width: Double = 1.0
-    var height: Double = 1.0
-    var depth: Double = 1.0
+    open var width: Double = 1.0
+    open var height: Double = 1.0
+    open var depth: Double = 1.0
 
     var faceColor : RGBA = Colors.RED
 

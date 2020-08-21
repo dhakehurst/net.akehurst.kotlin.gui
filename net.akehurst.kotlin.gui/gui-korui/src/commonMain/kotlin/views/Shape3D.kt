@@ -54,6 +54,9 @@ fun MeshBuilder3D.face(pos: Vector3D) {
     }
 }
 
+/*
+ * Note: To draw solid quads, you can use [Bitmaps.white] + [AgBitmapTextureManager] as texture and the [colorMul] as quad color.
+ */
 class Shape3D(
         drawCommands: MeshBuilder3D.() -> Unit
 ) : ViewWithMesh3D(createMesh(drawCommands).copy()) {

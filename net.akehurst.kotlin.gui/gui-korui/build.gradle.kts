@@ -6,11 +6,11 @@ repositories {
     }
 }
 
-val version_korlibs:String by project
+val version_korge:String by project
 
 dependencies {
 
     commonMainApi(project(":gui-core"))
 
-    commonMainImplementation("com.soywiz.korlibs.korge:korge:$version_korlibs")
+    commonMainImplementation("com.soywiz.korlibs.korge:korge:$version_korge")
 }

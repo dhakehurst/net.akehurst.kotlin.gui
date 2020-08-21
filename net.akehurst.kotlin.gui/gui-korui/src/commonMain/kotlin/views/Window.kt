@@ -20,9 +20,7 @@ import com.soywiz.korge.time.toTimeProvider
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.Views
 import com.soywiz.korge.view.addTo
-import com.soywiz.korge3d.addTo
-import com.soywiz.korge3d.box
-import com.soywiz.korge3d.scene3D
+import com.soywiz.korge3d.*
 import com.soywiz.korgw.CreateDefaultGameWindow
 import com.soywiz.korgw.GameWindow
 import com.soywiz.korgw.configure
@@ -42,10 +40,7 @@ import com.soywiz.korio.file.std.localCurrentDirVfs
 import com.soywiz.korio.file.std.resourcesVfs
 import com.soywiz.korio.lang.printStackTrace
 import com.soywiz.korio.util.OS
-import com.soywiz.korma.geom.Anchor
-import com.soywiz.korma.geom.Point
-import com.soywiz.korma.geom.ScaleMode
-import com.soywiz.korma.geom.SizeInt
+import com.soywiz.korma.geom.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
@@ -85,12 +80,19 @@ class Window(
         override var height: Double = this@Window.height.toDouble()
     }
     val stage3DView = content.scene3D {
+        light().position(0, 10, +10).setTo(Colors.RED)
     }
     val content3D = UIContainer().addTo(stage3DView.stage3D)
 
 
     suspend fun start() {
         val window = this
+
+        stage3DView.stage3D.camera.x = 10.0
+        stage3DView.stage3D.camera.y = 2.0
+        stage3DView.stage3D.camera.z = -50.0
+
+
         if (!OS.isJsBrowser) {
             configureLoggerFromProperties(localCurrentDirVfs["klogger.properties"])
         }
