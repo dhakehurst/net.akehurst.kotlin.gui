@@ -3,9 +3,9 @@ package net.akehurst.kotlin.gui.korui
 //import kotlinx.coroutines.launch
 import com.soywiz.klock.seconds
 import com.soywiz.korev.Key
-import com.soywiz.korev.keys
-import com.soywiz.korev.mouse
 import com.soywiz.korge.Korge
+import com.soywiz.korge.input.keys
+import com.soywiz.korge.input.mouse
 import com.soywiz.korge.tween.tween
 import com.soywiz.korge.view.Stage
 import com.soywiz.korge.view.roundRect
@@ -73,84 +73,82 @@ class GuiTest {
                 val s = scene3D {
                     light().position(0, 10, +10).setTo(Colors.RED)
 
-                    val b1 = box {
+                    val b1 = cube {
+                        this.x = -5.0
+                    }
 
+                    val b2 = cube {
+                        this.x = +5.0
                     }
 
                     launchImmediately {
                         while (true) {
                             tween(time = 16.seconds) {
-                              //  b1.modelMat.identity().rotate((it * 360).degrees, (it * 180).degrees, 0.degrees)
+                                //b1.modelMat.identity().rotate((it * 360).degrees, (it * 180).degrees, 0.degrees)
                             }
                         }
                     }
 
                 }
-                var ctrl = false
+
                 keys {
                     var xr = 0.0.degrees
 
-                    down(Key.LEFT_CONTROL) {       ctrl = true  }
-                    down(Key.RIGHT_CONTROL) { ctrl = true }
-                    up(Key.LEFT_CONTROL) { ctrl = false }
-                    up(Key.RIGHT_CONTROL) { ctrl = false }
-                    down(Key.UP) {
+                    downNew (Key.UP) {
                         s.stage3D.camera.y += 1.0
                     }
-                    down(Key.DOWN) {
+                    downNew(Key.DOWN) {
                         s.stage3D.camera.y -= 1.0
                     }
-                    down(Key.RIGHT) {
+                    downNew(Key.RIGHT) {
                         when {
-                            ctrl -> {
+                            it.ctrl -> {
                                 xr = xr.plus(1.0.degrees)
-                                s.stage3D.camera.modelMat.rotate(xr, 0.0.degrees, 0.0.degrees)
+                                s.stage3D.rotation(y = xr)
                             }
                             else -> s.stage3D.camera.x -= 1.0
                         }
                     }
-                    down(Key.LEFT) {
+                    downNew(Key.LEFT) {
                         s.stage3D.camera.x += 1.0
                     }
-                    down(Key.EQUAL) {
+                    downNew(Key.EQUAL) {
                         s.stage3D.camera.z += 1.0
                     }
-                    down(Key.MINUS) {
+                    downNew(Key.MINUS) {
                         s.stage3D.camera.z -= 1.0
                     }
-
+                    downNew(Key.COMMA) {
+                        xr = xr.plus(1.0.degrees)
+                        s.stage3D.rotation(y = xr)
+                    }
+                    downNew(Key.PERIOD) {
+                        xr = xr.plus((-1.0).degrees)
+                        s.stage3D.rotation(y = xr)
+                    }
                 }
 
                 mouse {
-                    var xStart = 0
-                    var xLast = 0
+                    var xStart = 0.0
+                    var xLast = 0.0
                     var down = false
                     down {
                         down = true
-                        xStart = this.x
                     }
                     move {
-                        if (down) {
-                            //TODO: detect change direction
-                            val dx = this.x - xStart
-
-                            when {
-                                isCtrlDown -> {
-                                }
-                                isShiftDown -> {
-                                }
-                                else -> {
-                                    s.stage3D.camera.x += dx/100.0
-                                }
-
+                        when{
+                            down && it.isShiftDown -> {
+                                val dx = it.lastPosGlobal.x - it.currentPosGlobal.x
+                                val dy = it.lastPosGlobal.y - it.currentPosGlobal.y
+                                s.stage3D.camera.x -= dx/100
+                                s.stage3D.camera.y -= dy/100
                             }
-                            xLast = this.x
                         }
                     }
                     up {
                         down = false
-                        xStart = 0
                     }
+
                 }
             }
         }
@@ -162,7 +160,7 @@ class GuiTest {
         val factory = GuiFactoryKorui()
         val win = guiWindow(factory, "Demo Application", 1280.0, 720.0) {
             panel {
-                button("P") {//"Press Me") {
+                button("U") {//"Press Me") {
                     onPressed {
                         println("pressed")
                     }

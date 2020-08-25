@@ -1,20 +1,17 @@
 package net.akehurst.kotlin.gui.korui.views
 
-import com.soywiz.kds.get
-import com.soywiz.kds.iterators.fastForEach
-import com.soywiz.kds.iterators.fastForEachWithIndex
 import com.soywiz.kmem.FBuffer
 import com.soywiz.kmem.clamp
 import com.soywiz.korag.AG
 import com.soywiz.korge.bitmapfont.drawText
 import com.soywiz.korge.html.Html
-import com.soywiz.korge.render.RenderContext
 import com.soywiz.korge.view.Fonts
-import com.soywiz.korge3d.*
+import com.soywiz.korge3d.RenderContext3D
+import com.soywiz.korge3d.drawText3D
 import com.soywiz.korim.bitmap.Bitmaps
-import com.soywiz.korim.color.Colors
-import com.soywiz.korim.color.RGBA
+import com.soywiz.korim.color.*
 import com.soywiz.korim.font.BitmapFont
+import com.soywiz.korim.font.drawText
 import com.soywiz.korma.geom.*
 
 class Text3D(
@@ -63,9 +60,7 @@ class Text3D(
     override fun render(ctx: RenderContext3D) {
         val ag = ctx.ag
         val font = fonts.getBitmapFont(format)
-
-
-        font.drawText3D(
+        (font as BitmapFont).drawText3D(
                 ctx,1.0,text
         )
     }
@@ -97,7 +92,7 @@ class Text3D(
         }
 
         //println(" -> ($x, $y)")
-        font.drawText(
+        (font as BitmapFont).drawText(
                 ctx.rctx,
                 format.computedSize.toDouble(),
                 text,

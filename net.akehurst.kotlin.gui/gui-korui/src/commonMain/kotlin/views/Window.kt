@@ -9,6 +9,8 @@ import com.soywiz.klock.milliseconds
 import com.soywiz.korev.*
 import com.soywiz.korge.Korge
 import com.soywiz.korge.input.Input
+import com.soywiz.korge.input.keys
+import com.soywiz.korge.input.mouse
 import com.soywiz.korge.internal.KorgeInternal
 import com.soywiz.korge.logger.configureLoggerFromProperties
 import com.soywiz.korge.resources.ResourcesRoot
@@ -49,6 +51,18 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.coroutineContext
 import kotlin.reflect.KClass
 
+class CameraConfiguration {
+    var keyZoomIn = Key.EQUAL
+    var keyZoomOut = Key.MINUS
+}
+
+class WindowConfiguration {
+    val camera = CameraConfiguration()
+    var initialX = 0.0
+    var initialY = 0.0
+    var initialZ = -50.0
+}
+
 class Window(
         var title: String = "Korge",
         val width: Int = 1280,
@@ -73,9 +87,11 @@ class Window(
         val injector: AsyncInjector = AsyncInjector()
 ) {
 
+    val configuration = WindowConfiguration()
+
     var isVisible = false
 
-    val content = object: Container() {
+    val content = object : Container() {
         override var width: Double = this@Window.width.toDouble()
         override var height: Double = this@Window.height.toDouble()
     }
@@ -84,22 +100,67 @@ class Window(
     }
     val content3D = UIContainer().addTo(stage3DView.stage3D)
 
-
     suspend fun start() {
         val window = this
 
-        stage3DView.stage3D.camera.x = 10.0
-        stage3DView.stage3D.camera.y = 2.0
-        stage3DView.stage3D.camera.z = -50.0
+        stage3DView.stage3D.camera.x = configuration.initialX
+        stage3DView.stage3D.camera.y = configuration.initialY
+        stage3DView.stage3D.camera.z = configuration.initialZ
+
+        var xRotate = 0.0.degrees
+        var yRotate = 0.0.degrees
+        var zRotate = 0.0.degrees
+
+        content.keys {
+            downNew(Key.UP) {
+                when {
+                    it.shift -> stage3DView.stage3D.camera.y += 1.0
+                    it.alt -> {
+                        xRotate = xRotate.plus(1.0.degrees)
+                        stage3DView.stage3D.rotation(x = xRotate, y = yRotate)
+                    }
+                }
+            }
+            downNew(Key.DOWN) {
+                when {
+                    it.shift -> stage3DView.stage3D.camera.y -= 1.0
+                    it.alt -> {
+                        xRotate = xRotate.plus(-(1.0).degrees)
+                        stage3DView.stage3D.rotation(x = xRotate, y = yRotate)
+                    }
+                }
+            }
+            downNew(Key.RIGHT) {
+                when {
+                    it.shift -> stage3DView.stage3D.camera.x -= 1.0
+                    it.alt -> {
+                        yRotate = yRotate.plus(1.0.degrees)
+                        stage3DView.stage3D.rotation(x = xRotate, y = yRotate)
+                    }
+                }
+            }
+            downNew(Key.LEFT) {
+                when {
+                    it.shift -> stage3DView.stage3D.camera.x += 1.0
+                    it.alt -> {
+                        yRotate = yRotate.plus((-1.0).degrees)
+                        stage3DView.stage3D.rotation(x = xRotate, y = yRotate)
+                    }
+                }
+            }
+            downNew(configuration.camera.keyZoomIn) {
+                stage3DView.stage3D.camera.z += 1.0
+            }
+            downNew(configuration.camera.keyZoomOut) {
+                stage3DView.stage3D.camera.z -= 1.0
+            }
+        }
 
 
         if (!OS.isJsBrowser) {
             configureLoggerFromProperties(localCurrentDirVfs["klogger.properties"])
         }
         val realGameWindow = (window.gameWindow ?: coroutineContext[GameWindow] ?: CreateDefaultGameWindow())
-        //println("Configure: ${width}x${height}")
-        // @TODO: Configure should happen before loop. But we should ensure that all the korgw targets are ready for this
-        //realGameWindow.configure(width, height, title, icon, fullscreen)
         realGameWindow.loop {
             val gameWindow = this
             if (OS.isNative) println("Korui[0]")
@@ -140,22 +201,43 @@ class Window(
             views.scaleMode = window.scaleMode
             views.clipBorders = window.clipBorders
             views.targetFps = window.targetFps
-            //Korge.prepareViews(views, gameWindow, bgcolor != null, bgcolor ?: Colors.TRANSPARENT_BLACK)
 
             Korge.prepareViews(views, gameWindow, window.bgcolor != null, window.bgcolor ?: Colors.TRANSPARENT_BLACK, waitForFirstRender = true)
 
             views.launchImmediately {
                 coroutineScope {
                     content.addTo(views.stage)
-                    // @TODO: Do not complete to prevent job cancelation?
-                    gameWindow.waitClose()
                 }
             }
             if (OS.isNative) println("CanvasApplicationEx.IN[1]")
             if (OS.isNative) println("Korui[1]")
 
-            // @TODO: Do not complete to prevent job cancelation?
-            //gameWindow.waitClose()
+            views.stage.mouse {
+                var down = false
+                down {
+                    down = true
+                }
+                move {
+                    when{
+                        down && it.isShiftDown -> {
+                            val dx = it.lastPosGlobal.x - it.currentPosGlobal.x
+                            val dy = it.lastPosGlobal.y - it.currentPosGlobal.y
+                            stage3DView.stage3D.camera.x -= dx/100
+                            stage3DView.stage3D.camera.y -= dy/100
+                        }
+                        down && it.isAltDown -> {
+                            val dx = it.lastPosGlobal.x - it.currentPosGlobal.x
+                            val dy = it.lastPosGlobal.y - it.currentPosGlobal.y
+                            xRotate = xRotate.plus((dy/100).degrees)
+                            yRotate = yRotate.plus(-(dx/100).degrees)
+                            stage3DView.stage3D.rotation(x = xRotate, y = yRotate)
+                        }
+                    }
+                }
+                up {
+                    down = false
+                }
+            }
         }
     }
 
@@ -183,7 +265,7 @@ class Window(
             eventDispatcher: EventDispatcher,
             clearEachFrame: Boolean = true,
             bgcolor: RGBA = Colors.TRANSPARENT_BLACK,
-            fixedSizeStep: TimeSpan = TimeSpan.NULL
+            fixedSizeStep: TimeSpan = TimeSpan.NIL
     ): CompletableDeferred<Unit> {
         val injector = views.injector
         injector.mapInstance(views)
@@ -417,7 +499,7 @@ class Window(
             eventDispatcher: EventDispatcher,
             clearEachFrame: Boolean = true,
             bgcolor: RGBA = Colors.TRANSPARENT_BLACK,
-            fixedSizeStep: TimeSpan = TimeSpan.NULL,
+            fixedSizeStep: TimeSpan = TimeSpan.NIL,
             waitForFirstRender: Boolean = true
     ) {
         val firstRenderDeferred = prepareViewsBase(views, eventDispatcher, clearEachFrame, bgcolor, fixedSizeStep)
