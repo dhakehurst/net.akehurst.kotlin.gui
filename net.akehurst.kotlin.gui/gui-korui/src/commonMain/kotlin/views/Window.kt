@@ -35,7 +35,6 @@ import com.soywiz.korim.vector.render
 import com.soywiz.korinject.AsyncInjector
 import com.soywiz.korinject.AsyncInjectorContext
 import com.soywiz.korio.async.delay
-import com.soywiz.korio.async.launch
 import com.soywiz.korio.async.launchImmediately
 import com.soywiz.korio.dynamic.KDynamic
 import com.soywiz.korio.file.std.localCurrentDirVfs
@@ -43,10 +42,7 @@ import com.soywiz.korio.file.std.resourcesVfs
 import com.soywiz.korio.lang.printStackTrace
 import com.soywiz.korio.util.OS
 import com.soywiz.korma.geom.*
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.coroutineContext
 import kotlin.reflect.KClass
@@ -107,56 +103,6 @@ class Window(
         stage3DView.stage3D.camera.y = configuration.initialY
         stage3DView.stage3D.camera.z = configuration.initialZ
 
-        var xRotate = 0.0.degrees
-        var yRotate = 0.0.degrees
-        var zRotate = 0.0.degrees
-
-        content.keys {
-            downNew(Key.UP) {
-                when {
-                    it.shift -> stage3DView.stage3D.camera.y += 1.0
-                    it.alt -> {
-                        xRotate = xRotate.plus(1.0.degrees)
-                        stage3DView.stage3D.rotation(x = xRotate, y = yRotate)
-                    }
-                }
-            }
-            downNew(Key.DOWN) {
-                when {
-                    it.shift -> stage3DView.stage3D.camera.y -= 1.0
-                    it.alt -> {
-                        xRotate = xRotate.plus(-(1.0).degrees)
-                        stage3DView.stage3D.rotation(x = xRotate, y = yRotate)
-                    }
-                }
-            }
-            downNew(Key.RIGHT) {
-                when {
-                    it.shift -> stage3DView.stage3D.camera.x -= 1.0
-                    it.alt -> {
-                        yRotate = yRotate.plus(1.0.degrees)
-                        stage3DView.stage3D.rotation(x = xRotate, y = yRotate)
-                    }
-                }
-            }
-            downNew(Key.LEFT) {
-                when {
-                    it.shift -> stage3DView.stage3D.camera.x += 1.0
-                    it.alt -> {
-                        yRotate = yRotate.plus((-1.0).degrees)
-                        stage3DView.stage3D.rotation(x = xRotate, y = yRotate)
-                    }
-                }
-            }
-            downNew(configuration.camera.keyZoomIn) {
-                stage3DView.stage3D.camera.z += 1.0
-            }
-            downNew(configuration.camera.keyZoomOut) {
-                stage3DView.stage3D.camera.z -= 1.0
-            }
-        }
-
-
         if (!OS.isJsBrowser) {
             configureLoggerFromProperties(localCurrentDirVfs["klogger.properties"])
         }
@@ -212,6 +158,55 @@ class Window(
             if (OS.isNative) println("CanvasApplicationEx.IN[1]")
             if (OS.isNative) println("Korui[1]")
 
+            var xRotate = 0.0.degrees
+            var yRotate = 0.0.degrees
+            var zRotate = 0.0.degrees
+
+            views.stage.keys {
+                downNew(Key.UP) {
+                    when {
+                        it.shift -> stage3DView.stage3D.camera.y += 1.0
+                        it.alt -> {
+                            xRotate = xRotate.plus(1.0.degrees)
+                            stage3DView.stage3D.rotation(x = xRotate, y = yRotate)
+                        }
+                    }
+                }
+                downNew(Key.DOWN) {
+                    when {
+                        it.shift -> stage3DView.stage3D.camera.y -= 1.0
+                        it.alt -> {
+                            xRotate = xRotate.plus(-(1.0).degrees)
+                            stage3DView.stage3D.rotation(x = xRotate, y = yRotate)
+                        }
+                    }
+                }
+                downNew(Key.RIGHT) {
+                    when {
+                        it.shift -> stage3DView.stage3D.camera.x -= 1.0
+                        it.alt -> {
+                            yRotate = yRotate.plus(1.0.degrees)
+                            stage3DView.stage3D.rotation(x = xRotate, y = yRotate)
+                        }
+                    }
+                }
+                downNew(Key.LEFT) {
+                    when {
+                        it.shift -> stage3DView.stage3D.camera.x += 1.0
+                        it.alt -> {
+                            yRotate = yRotate.plus((-1.0).degrees)
+                            stage3DView.stage3D.rotation(x = xRotate, y = yRotate)
+                        }
+                    }
+                }
+                downNew(configuration.camera.keyZoomIn) {
+                    stage3DView.stage3D.camera.z += 1.0
+                }
+                downNew(configuration.camera.keyZoomOut) {
+                    stage3DView.stage3D.camera.z -= 1.0
+                }
+            }
+
             views.stage.mouse {
                 var down = false
                 down {
@@ -241,9 +236,15 @@ class Window(
         }
     }
 
-    fun show() {
-        GlobalScope.launch {
-            start()
+    fun show(async:Boolean = true) {
+        if (async) {
+            GlobalScope.async {
+                start()
+            }
+        } else {
+            GlobalScope.launch {
+                start()
+            }
         }
     }
 

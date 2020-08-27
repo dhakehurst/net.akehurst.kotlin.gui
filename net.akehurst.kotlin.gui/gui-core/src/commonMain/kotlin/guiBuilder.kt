@@ -21,6 +21,11 @@ class WindowBuilder(
 
     val control = factory.createWindow()
 
+    fun cube(init:GuiCube.()->Unit)  {
+        val el = this.factory.createCube(this.control)
+        el.init()
+    }
+
     fun panel(init: PanelBuilder.() -> Unit = {}): GuiPanel {
         val b = PanelBuilder(factory, this.control)
         b.init()
@@ -187,8 +192,9 @@ class TextEditorBuilder(
 class PanelBuilder(
         factory: GuiFactory,
         container: GuiContainer,
-        val width: Double = 50.0,
-        val height: Double = 30.0
+        val width: Double = 1.0,
+        val height: Double = 1.0,
+        val depth: Double =1.0
 ) : ContainerBuilder(factory, container) {
 
     override val control = factory.createPanel(container)
@@ -196,6 +202,7 @@ class PanelBuilder(
     override fun build(): GuiPanel {
         control.width = width
         control.height = height
+        control.depth = depth
         return control
     }
 

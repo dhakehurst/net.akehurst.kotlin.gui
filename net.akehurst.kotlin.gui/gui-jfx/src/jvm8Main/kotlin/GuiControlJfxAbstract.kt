@@ -17,6 +17,10 @@ abstract class GuiControlJfxAbstract : GuiControl {
         get() = jfx.prefHeight
         set(value) {jfx.prefHeight = value}
 
+    override var depth: Double
+        get() = 0.0
+        set(value) {}
+
     override fun applyLayout(guiLayout: GuiLayout) {
         TODO("not implemented")
     }

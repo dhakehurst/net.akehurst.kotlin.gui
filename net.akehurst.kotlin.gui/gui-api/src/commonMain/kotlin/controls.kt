@@ -10,6 +10,7 @@ interface GuiFactory {
     fun createPanel(container: GuiContainer): GuiPanel
     fun createProgressBar(container: GuiContainer): GuiProgressBar
 
+    fun createCube(container: GuiContainer) : GuiCube
 
 }
 
@@ -21,9 +22,16 @@ interface GuiWindow : GuiContainer {
 
 }
 
+interface GuiCube {
+    var x:Double
+    var y:Double
+    var z:Double
+}
+
 interface GuiControl {
     var width: Double
     var height: Double
+    var depth: Double
 
     fun applyLayout(guiLayout: GuiLayout)
 }

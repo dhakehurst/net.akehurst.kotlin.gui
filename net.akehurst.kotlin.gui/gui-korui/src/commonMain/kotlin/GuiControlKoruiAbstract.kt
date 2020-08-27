@@ -16,9 +16,14 @@ abstract class GuiControlKoruiAbstract : GuiControl {
     override var width: Double
         get() = korui3D.width
         set(value) {korui3D.width = value}
+
     override var height: Double
         get() = korui3D.height
         set(value) {korui3D.height = value}
+
+    override var depth: Double
+        get() = korui3D.depth
+        set(value) {korui3D.depth = value}
 
     override fun applyLayout(guiLayout: GuiLayout) {
 

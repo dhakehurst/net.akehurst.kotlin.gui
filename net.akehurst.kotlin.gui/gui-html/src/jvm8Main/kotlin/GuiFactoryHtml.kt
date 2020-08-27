@@ -31,4 +31,8 @@ class GuiFactoryHtml : GuiFactory {
     override fun createProgressBar(container: GuiContainer): GuiProgressBar {
         TODO("not implemented")
     }
+
+    override fun createCube(container: GuiContainer): GuiCube {
+        TODO("not implemented")
+    }
 }

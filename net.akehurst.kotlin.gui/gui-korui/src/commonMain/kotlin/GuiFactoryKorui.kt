@@ -12,6 +12,12 @@ class GuiFactoryKorui : GuiFactory {
         return GuiWindowKorui()
     }
 
+    override fun createCube(container: GuiContainer) :GuiCube {
+        val el = GuiCubeKorui()
+        container.addContent(el)
+        return el
+    }
+
     override fun createButton(container: GuiContainer): GuiButton {
         val el = GuiButtonKorui()
         container.addContent(el)

@@ -50,4 +50,8 @@ class GuiFactoryJfx : GuiFactory {
         TODO("not implemented")
     }
 
+    override fun createCube(container: GuiContainer): GuiCube {
+        TODO("not implemented")
+    }
+
 }
