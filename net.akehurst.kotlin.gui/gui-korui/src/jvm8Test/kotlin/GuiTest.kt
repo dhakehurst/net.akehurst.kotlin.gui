@@ -73,7 +73,14 @@ class GuiTest {
         GlobalScope.launch {
             val kg = Korge { // this: Stage
                 val s = scene3D {
-                    light().position(0, 10, +10).setTo(Colors.WHITE)
+                    light().position(0, -2, -4).setTo(Colors.WHITE)
+                    val light = shape3D {
+                        material(
+                                //emission = Material3D.LightColor(Colors.WHITE),
+                                diffuse = Material3D.LightColor(Colors.WHITE)
+                        )
+                        cube(0.1f)
+                    }.position(0f,-2f,-4f)
 
                     //val b1 = cube {
                     //    this.x = -5.0
@@ -107,6 +114,7 @@ class GuiTest {
 
                     val rectangle = shape3D {
                         material(
+                                ambient = Material3D.LightColor(RGBA(0x00, 0x02, 0x00, 0xff)),
                                 diffuse = Material3D.LightColor(RGBA(0x00, 0xaa, 0, 0xff))
                         )
 
@@ -122,6 +130,7 @@ class GuiTest {
 
                     val cuboide = shape3D {
                         material(
+                                ambient = Material3D.LightColor(RGBA(0x00, 0x00, 0x02, 0xff)),
                                 diffuse = Material3D.LightColor(RGBA(0x00, 0x00, 0xaa, 0xff)),
                                 specular = Material3D.LightColor(Colors.WHITE),
                                 shininess = 0.5f
@@ -130,7 +139,32 @@ class GuiTest {
                         cuboid(2f,1f,0.5f)
 
                         //position(5f,5f,0f)
-                    }//.position(3f,-3f,0f)
+                    }.position(3f,-3f,0f)
+
+                    val pyramidTriangleBase = shape3D {
+                        material(
+                            ambient = Material3D.LightColor(RGBA(0x00, 0x02, 0x02, 0xff)),
+                            diffuse = Material3D.LightColor(RGBA(0x00, 0xaa, 0xaa, 0xff)),
+                            specular = Material3D.LightColor(Colors.WHITE),
+                            shininess = 0.5f
+                    )
+                        pyramidTriangleBase(
+                                Vector3D(0f, 0.5f, 0f),
+                                Vector3D(0.5f, -0.5f, 0.5f),
+                                Vector3D(-0.5f, -0.5f, 0.5f),
+                                Vector3D(0, -0.5f, -0.5f)
+                        )
+                    }.position(-3f,-3f,0f)
+
+                    val sphere = shape3D {
+                        material(
+                                ambient = Material3D.LightColor(RGBA(0x02, 0x02, 0x00, 0xff)),
+                                diffuse = Material3D.LightColor(RGBA(0xaa, 0xaa, 0x00, 0xff)),
+                                specular = Material3D.LightColor(RGBA(0xaa, 0xaa, 0x00, 0xff)),
+                                shininess = 0.6f
+                        )
+                        sphere(1f,longitudeLines = 360, latitudeLines = 360)
+                    }
 
                     launchImmediately {
                         while (true) {
@@ -149,7 +183,7 @@ class GuiTest {
                 keys {
                     downNew(Key.UP) {
                         when {
-                            it.shift -> s.stage3D.camera.y += 1.0
+                            it.shift -> s.stage3D.camera.y += 2.0
                             it.alt -> {
                                 xRotate = xRotate.plus(1.0.degrees)
                                 s.stage3D.rotation(x = xRotate, y = yRotate)
@@ -158,7 +192,7 @@ class GuiTest {
                     }
                     downNew(Key.DOWN) {
                         when {
-                            it.shift -> s.stage3D.camera.y -= 1.0
+                            it.shift -> s.stage3D.camera.y -= 2.0
                             it.alt -> {
                                 xRotate = xRotate.plus(-(1.0).degrees)
                                 s.stage3D.rotation(x = xRotate, y = yRotate)
@@ -167,7 +201,7 @@ class GuiTest {
                     }
                     downNew(Key.RIGHT) {
                         when {
-                            it.shift -> s.stage3D.camera.x -= 1.0
+                            it.shift -> s.stage3D.camera.x -= 2.0
                             it.alt -> {
                                 yRotate = yRotate.plus(1.0.degrees)
                                 s.stage3D.rotation(x = xRotate, y = yRotate)
@@ -176,7 +210,7 @@ class GuiTest {
                     }
                     downNew(Key.LEFT) {
                         when {
-                            it.shift -> s.stage3D.camera.x += 1.0
+                            it.shift -> s.stage3D.camera.x += 2.0
                             it.alt -> {
                                 yRotate = yRotate.plus((-1.0).degrees)
                                 s.stage3D.rotation(x = xRotate, y = yRotate)
@@ -184,10 +218,10 @@ class GuiTest {
                         }
                     }
                     downNew(Key.EQUAL) {
-                        s.stage3D.camera.z += 1.0
+                        s.stage3D.camera.z += 2.0
                     }
                     downNew(Key.MINUS) {
-                        s.stage3D.camera.z -= 1.0
+                        s.stage3D.camera.z -= 2.0
                     }
                 }
 
