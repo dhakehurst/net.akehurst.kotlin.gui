@@ -13,6 +13,18 @@ abstract class GuiControlKoruiAbstract : GuiControl {
 
     // --- GuiControl ---
 
+    override var x: Double
+        get() = korui3D.x
+        set(value) {korui3D.x = value}
+
+    override var y: Double
+        get() = korui3D.y
+        set(value) {korui3D.y = value}
+
+    override var z: Double
+        get() = korui3D.z
+        set(value) {korui3D.z = value}
+
     override var width: Double
         get() = korui3D.width
         set(value) {korui3D.width = value}

@@ -24,6 +24,9 @@ import kotlinx.coroutines.GlobalScope
 import net.akehurst.kotlin.gui.core.GuiLayoutFactorySimple
 import net.akehurst.kotlin.gui.core.guiLayout
 import net.akehurst.kotlin.gui.core.guiWindow
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.tan
 import kotlin.test.Test
 
 class GuiTest {
@@ -72,6 +75,7 @@ class GuiTest {
         lateinit var s: Stage
         GlobalScope.launch {
             val kg = Korge { // this: Stage
+                lateinit var cuboide:Shape3D
                 val s = scene3D {
                     light().position(0, -2, -4).setTo(Colors.WHITE)
                     val light = shape3D {
@@ -82,14 +86,6 @@ class GuiTest {
                         cube(0.1f)
                     }.position(0f,-2f,-4f)
 
-                    //val b1 = cube {
-                    //    this.x = -5.0
-                    //}
-
-                    //val b2 = cube {
-                    //    this.x = +5.0
-                    //}
-
                     val triangle = shape3D {
                         material(
                                 diffuse = Material3D.LightColor(RGBA(0xaa, 0, 0, 0xff))
@@ -99,17 +95,6 @@ class GuiTest {
                                 Vector3D(1f, 1f, 0f),
                                 Vector3D(1f, -1f, 0f)
                         )
-                        /*
-                        faceRectangle(
-                                Vector3D(-5f, 5f, 0f),
-                                Vector3D(5f, 5f, 0f),
-                                Vector3D(5f, -5f, 0f),
-                                Vector3D(-5f, -5f, 0f)
-                        )
-
-                         */
-                        //cuboid(1f,1f,1f)
-
                     }.position(-3f,3f,0f)
 
                     val rectangle = shape3D {
@@ -117,28 +102,22 @@ class GuiTest {
                                 ambient = Material3D.LightColor(RGBA(0x00, 0x02, 0x00, 0xff)),
                                 diffuse = Material3D.LightColor(RGBA(0x00, 0xaa, 0, 0xff))
                         )
-
                         faceRectangle(
                                 Vector3D(-1f, 1f, 0f),
                                 Vector3D(1f, 1f, 0f),
                                 Vector3D(1f, -1f, 0f),
                                 Vector3D(-1f, -1f, 0f)
                         )
-
-                        //position(5f,5f,0f)
                     }.position(3f,3f,0f)
 
-                    val cuboide = shape3D {
+                     cuboide = shape3D {
                         material(
                                 ambient = Material3D.LightColor(RGBA(0x00, 0x00, 0x02, 0xff)),
                                 diffuse = Material3D.LightColor(RGBA(0x00, 0x00, 0xaa, 0xff)),
                                 specular = Material3D.LightColor(Colors.WHITE),
                                 shininess = 0.5f
                         )
-
-                        cuboid(2f,1f,0.5f)
-
-                        //position(5f,5f,0f)
+                        cuboid(2f,1f,0.2f)
                     }.position(3f,-3f,0f)
 
                     val pyramidTriangleBase = shape3D {
@@ -164,6 +143,21 @@ class GuiTest {
                                 shininess = 0.6f
                         )
                         sphere(1f,longitudeLines = 360, latitudeLines = 360)
+                    }.position(-3f,0f,0f)
+
+                    val blob = shape3D {
+                        material(
+                                ambient = Material3D.LightColor(RGBA(0x02, 0x02, 0x00, 0xff)),
+                                diffuse = Material3D.LightColor(RGBA(0xaa, 0xaa, 0x00, 0xff)),
+                                specular = Material3D.LightColor(RGBA(0xaa, 0xaa, 0x00, 0xff)),
+                                shininess = 0.6f
+                        )
+                        parametric(360,360) { u,v ->
+                            val x = cos(u)
+                            val y = v
+                            val z = sin(u)
+                            Vector3D(x,y,z)
+                        }
                     }
 
                     launchImmediately {
@@ -186,7 +180,8 @@ class GuiTest {
                             it.shift -> s.stage3D.camera.y += 2.0
                             it.alt -> {
                                 xRotate = xRotate.plus(1.0.degrees)
-                                s.stage3D.rotation(x = xRotate, y = yRotate)
+                                //s.stage3D.rotation(x = xRotate, y = yRotate)
+                                cuboide.rotation(x = xRotate, y = yRotate)
                             }
                         }
                     }
@@ -195,7 +190,8 @@ class GuiTest {
                             it.shift -> s.stage3D.camera.y -= 2.0
                             it.alt -> {
                                 xRotate = xRotate.plus(-(1.0).degrees)
-                                s.stage3D.rotation(x = xRotate, y = yRotate)
+                                //s.stage3D.rotation(x = xRotate, y = yRotate)
+                                cuboide.rotation(x = xRotate, y = yRotate)
                             }
                         }
                     }
@@ -204,7 +200,8 @@ class GuiTest {
                             it.shift -> s.stage3D.camera.x -= 2.0
                             it.alt -> {
                                 yRotate = yRotate.plus(1.0.degrees)
-                                s.stage3D.rotation(x = xRotate, y = yRotate)
+                                //s.stage3D.rotation(x = xRotate, y = yRotate)
+                                cuboide.rotation(x = xRotate, y = yRotate)
                             }
                         }
                     }
@@ -213,7 +210,8 @@ class GuiTest {
                             it.shift -> s.stage3D.camera.x += 2.0
                             it.alt -> {
                                 yRotate = yRotate.plus((-1.0).degrees)
-                                s.stage3D.rotation(x = xRotate, y = yRotate)
+                                //s.stage3D.rotation(x = xRotate, y = yRotate)
+                                cuboide.rotation(x = xRotate, y = yRotate)
                             }
                         }
                     }
@@ -284,7 +282,10 @@ class GuiTest {
     fun panel() {
         val factory = GuiFactoryKorui()
         val win = guiWindow(factory, "Test", 1280.0, 720.0) {
-            panel {
+            panel() {
+                width = 5.0
+                height = 10.0
+                depth = 1.0
             }
         }
         win.applyLayout(
@@ -298,6 +299,31 @@ class GuiTest {
         win.show()
         Thread.sleep(1000000)
     }
+
+    @Test
+    fun text() {
+        val factory = GuiFactoryKorui()
+        val win = guiWindow(factory, "Test", 1280.0, 720.0) {
+            panel {
+                width = 10.0
+                height = 5.0
+                text("Hello World!") {
+                    z = -2.0
+                }
+            }
+        }
+        win.applyLayout(
+                guiLayout(GuiLayoutFactorySimple()) {
+                    rule("*") {
+                        declaration("display", "flex")
+                        declaration("depth", "10.0")
+                    }
+                }
+        )
+        win.show()
+        Thread.sleep(1000000)
+    }
+
 
     @Test
     fun button() {

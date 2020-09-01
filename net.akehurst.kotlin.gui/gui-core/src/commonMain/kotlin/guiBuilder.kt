@@ -42,7 +42,10 @@ class WindowBuilder(
 @GuiBuilderDsl
 abstract class ControlBuilder(
         val factory: GuiFactory,
-        val container: GuiContainer
+        val container: GuiContainer,
+        var x:Double = 0.0,
+        var y:Double = 0.0,
+        var z:Double = 0.0
 ) {
     abstract val control: GuiControl
 
@@ -152,17 +155,16 @@ class DialogBuilder(
 class TextBuilder(
         factory: GuiFactory,
         container: GuiContainer,
-        val text: String,
-        val width: Double = 50.0,
-        val height: Double = 30.0
+        val text: String
 ) : ControlBuilder(factory, container) {
 
     override val control = factory.createText(container)
 
     override fun build(): GuiText {
         control.text = text
-        control.width = width
-        control.height = height
+        control.x = x
+        control.y = y
+        control.z = z
         return control
     }
 
@@ -192,9 +194,9 @@ class TextEditorBuilder(
 class PanelBuilder(
         factory: GuiFactory,
         container: GuiContainer,
-        val width: Double = 1.0,
-        val height: Double = 1.0,
-        val depth: Double =1.0
+        var width: Double = 1.0,
+        var height: Double = 1.0,
+        var depth: Double =1.0
 ) : ContainerBuilder(factory, container) {
 
     override val control = factory.createPanel(container)

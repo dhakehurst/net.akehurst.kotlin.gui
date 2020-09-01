@@ -29,6 +29,10 @@ interface GuiCube {
 }
 
 interface GuiControl {
+    var x: Double
+    var y: Double
+    var z: Double
+
     var width: Double
     var height: Double
     var depth: Double

@@ -5,24 +5,24 @@ import com.soywiz.korma.geom.Vector3D
 
 class Panel : UIContainer() {
 
-    override var width: Double= 1.0
+    override var width: Double= 2.0
     set(value) {
         field = value
         shape.width = value
     }
-    override var height: Double= 1.0
+    override var height: Double= 3.0
         set(value) {
             field = value
             shape.height = value
         }
-    override var depth: Double= 1.0
+    override var depth: Double= 0.2
         set(value) {
             field = value
             shape.depth = value
         }
 
     val shape = shape3D(width, height, depth) {
-        cube()
+        cuboid(width.toFloat(),height.toFloat(),depth.toFloat())
     }
 
 }
