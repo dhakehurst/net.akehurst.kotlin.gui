@@ -1,15 +1,9 @@
 package net.akehurst.kotlin.gui.korui.views
 
-import com.soywiz.korge.bitmapfont.drawText
 import com.soywiz.korge.html.Html
 import com.soywiz.korge.view.Fonts
-import com.soywiz.korge3d.RenderContext3D
-import com.soywiz.korge3d.drawText3D
 import com.soywiz.korge3d.text3D
-import com.soywiz.korim.bitmap.Bitmaps
 import com.soywiz.korim.color.Colors
-import com.soywiz.korim.color.RGBA
-import com.soywiz.korim.font.BitmapFont
 import com.soywiz.korma.geom.Rectangle
 import com.soywiz.korma.geom.Vector3D
 
@@ -46,10 +40,10 @@ class Text3D(
 
     val text3D = text3D(
             "Temp",
-            Vector3D(x,y,-1.0),
-            Vector3D(x,y,-1.0),
-            Vector3D(x,y,-1.0),
-            Vector3D(x,y,-1.0)
+            Vector3D(x, y, -1.0),
+            Vector3D(x, y, -1.0),
+            Vector3D(x, y, -1.0),
+            Vector3D(x, y, -1.0)
     )
 
     init {
@@ -63,7 +57,6 @@ class Text3D(
     private fun recalculateBoundsWhenRequired() {
         if (autoSize) recalculateBounds()
     }
-
 
 
 }

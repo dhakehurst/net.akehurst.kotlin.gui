@@ -16,10 +16,7 @@ import com.soywiz.korim.color.Colors
 import com.soywiz.korim.color.RGBA
 import com.soywiz.korio.async.launch
 import com.soywiz.korio.async.launchImmediately
-import com.soywiz.korma.geom.Vector3D
-import com.soywiz.korma.geom.degrees
-import com.soywiz.korma.geom.plus
-import com.soywiz.korma.geom.unaryMinus
+import com.soywiz.korma.geom.*
 import kotlinx.coroutines.GlobalScope
 import net.akehurst.kotlin.gui.core.GuiLayoutFactorySimple
 import net.akehurst.kotlin.gui.core.guiLayout
@@ -76,7 +73,7 @@ class GuiTest {
         GlobalScope.launch {
             val kg = Korge { // this: Stage
                 lateinit var cuboide:Shape3D
-                val s = scene3D {
+                val stage3DView = scene3D {
                     light().position(0, -2, -4).setTo(Colors.WHITE)
                     val light = shape3D {
                         material(
@@ -170,56 +167,65 @@ class GuiTest {
 
                 }
 
-                var xRotate = 0.0.degrees
+                var xRotate = 90.0.degrees
                 var yRotate = 0.0.degrees
                 var zRotate = 0.0.degrees
+                var distance = 10f
+                var focusX = 0f
+                var focusY = 0f
+                var focusZ = 0f
+
+                fun updateCamera() {
+                    val camX = sin(yRotate).toFloat() * distance
+                    val camZ = cos(yRotate).toFloat() * -distance
+                    val camY = cos(xRotate).toFloat() * distance
+                    stage3DView.stage3D.camera.positionLookingAt(camX,camY,camZ, focusX, focusY, focusZ)
+                }
 
                 keys {
                     downNew(Key.UP) {
                         when {
-                            it.shift -> s.stage3D.camera.y += 2.0
+                            it.shift -> stage3DView.stage3D.camera.y += 2.0
                             it.alt -> {
                                 xRotate = xRotate.plus(1.0.degrees)
-                                //s.stage3D.rotation(x = xRotate, y = yRotate)
-                                cuboide.rotation(x = xRotate, y = yRotate)
+                                updateCamera()
                             }
                         }
                     }
                     downNew(Key.DOWN) {
                         when {
-                            it.shift -> s.stage3D.camera.y -= 2.0
+                            it.shift -> stage3DView.stage3D.camera.y -= 2.0
                             it.alt -> {
-                                xRotate = xRotate.plus(-(1.0).degrees)
-                                //s.stage3D.rotation(x = xRotate, y = yRotate)
-                                cuboide.rotation(x = xRotate, y = yRotate)
+                                xRotate = xRotate.plus((-1.0).degrees)
+                                updateCamera()
                             }
                         }
                     }
                     downNew(Key.RIGHT) {
                         when {
-                            it.shift -> s.stage3D.camera.x -= 2.0
+                            it.shift -> stage3DView.stage3D.camera.x -= 2.0
                             it.alt -> {
                                 yRotate = yRotate.plus(1.0.degrees)
-                                //s.stage3D.rotation(x = xRotate, y = yRotate)
-                                cuboide.rotation(x = xRotate, y = yRotate)
+                                updateCamera()
                             }
                         }
                     }
                     downNew(Key.LEFT) {
                         when {
-                            it.shift -> s.stage3D.camera.x += 2.0
+                            it.shift -> stage3DView.stage3D.camera.x += 2.0
                             it.alt -> {
                                 yRotate = yRotate.plus((-1.0).degrees)
-                                //s.stage3D.rotation(x = xRotate, y = yRotate)
-                                cuboide.rotation(x = xRotate, y = yRotate)
+                                updateCamera()
                             }
                         }
                     }
                     downNew(Key.EQUAL) {
-                        s.stage3D.camera.z += 2.0
+                        distance += -2f
+                        updateCamera()
                     }
                     downNew(Key.MINUS) {
-                        s.stage3D.camera.z -= 2.0
+                        distance += 2f
+                        updateCamera()
                     }
                 }
 
@@ -233,15 +239,15 @@ class GuiTest {
                             down && it.isShiftDown -> {
                                 val dx = it.lastPosGlobal.x - it.currentPosGlobal.x
                                 val dy = it.lastPosGlobal.y - it.currentPosGlobal.y
-                                s.stage3D.camera.x -= dx / 100
-                                s.stage3D.camera.y -= dy / 100
+                                stage3DView.stage3D.camera.x -= dx / 100
+                                stage3DView.stage3D.camera.y -= dy / 100
                             }
                             down && it.isAltDown -> {
                                 val dx = it.lastPosGlobal.x - it.currentPosGlobal.x
                                 val dy = it.lastPosGlobal.y - it.currentPosGlobal.y
                                 xRotate = xRotate.plus((dy / 100).degrees)
                                 yRotate = yRotate.plus(-(dx / 100).degrees)
-                                s.stage3D.rotation(x = xRotate, y = yRotate)
+                                stage3DView.stage3D.rotation(x = xRotate, y = yRotate)
                             }
                         }
                     }
