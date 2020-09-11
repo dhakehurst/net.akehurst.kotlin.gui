@@ -8,7 +8,7 @@ class GuiTest {
     @Test
     fun t() {
         val factory = GuiFactoryJfx()
-        val win = guiWindow(factory, "Demo Application") {
+        val win = guiWindow(factory, "Demo Application", 800.0, 500.0) {
             panel {
                 text("Hello World!")
                 val dialog1 = dialog("Progress") {

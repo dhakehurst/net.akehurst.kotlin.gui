@@ -10,6 +10,18 @@ abstract class GuiControlJfxAbstract : GuiControl {
 
     abstract val jfx : Region
 
+
+    override var x: Double
+        get() = jfx.layoutX
+        set(value) {jfx.layoutX = value}
+    override var y: Double
+        get() = jfx.layoutY
+        set(value) {jfx.layoutY = value}
+
+    override var z: Double
+        get() = 0.0
+        set(value) {}
+
     override var width: Double
         get() = jfx.prefWidth
         set(value) {jfx.prefWidth = value}

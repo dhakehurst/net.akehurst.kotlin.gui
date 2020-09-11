@@ -1,6 +1,5 @@
 package net.akehurst.kotlin.gui.korui
 
-//import kotlinx.coroutines.launch
 import com.soywiz.klock.seconds
 import com.soywiz.korev.Key
 import com.soywiz.korge.Korge
@@ -25,18 +24,15 @@ import kotlinx.coroutines.GlobalScope
 import net.akehurst.kotlin.gui.core.GuiLayoutFactorySimple
 import net.akehurst.kotlin.gui.core.guiLayout
 import net.akehurst.kotlin.gui.core.guiWindow
-import java.lang.reflect.Field
-
 import kotlin.test.Test
 
-class GuiTestJvm {
+fun main() {
+    val t =GuiTest()
+    t.korg3d()
+}
 
-    fun updateEnv(name: String, value: String) {
-        val env = System.getenv()
-        val field: Field = env.javaClass.getDeclaredField("m")
-        field.setAccessible(true)
-        (field.get(env) as MutableMap<String, String>).put(name, value)
-    }
+class GuiTest {
+
 
     @Test
     fun korg1() {
@@ -62,17 +58,17 @@ class GuiTestJvm {
 
 
     @Test
-    fun gw() = suspendTest {
+    fun gw() {
         lateinit var s: Stage
+        GlobalScope.launch {
+            val gw = CreateDefaultGameWindow()
+            gw.configure(500, 300, "Window", null, null)
+            gw.loop {
 
-        val gw = CreateDefaultGameWindow()
-        gw.configure(500, 300, "Window", null, null)
-        gw.loop {
-
+            }
+            // gw.addEventListener()
+            gw.waitClose()
         }
-        // gw.addEventListener()
-        gw.waitClose()
-
         //Thread.sleep(1000000)
     }
 
@@ -80,52 +76,37 @@ class GuiTestJvm {
     @Test
     fun korg3d() = suspendTest {
 
-        //   updateEnv("FORCE_GLSL_VERSION", "330")
-           updateEnv("DEBUG_GLSL", "true")
-        updateEnv("KORGW_CHECK_OPENGL", "true")
-        //updateEnv("KORGW_LOG_OPENGL", "true")
+       // updateEnv("FORCE_GLSL_VERSION", "330")
+       // updateEnv("DEBUG_GLSL", "true")
 
         lateinit var s: Stage
         val bmp = resourcesVfs.get("Australia.bmp").readBitmap()
-        val f = "skybmp" //"skybox"
-        val e = "bmp" //"jpg"
-        val leftImage = resourcesVfs.get("$f/left.$e").readNativeImage()
-        val rightImage = resourcesVfs.get("$f/right.$e").readNativeImage()
-        val topImage = resourcesVfs.get("$f/top.$e").readNativeImage()
-        val bottomImage = resourcesVfs.get("$f/bottom.$e").readNativeImage()
-        val backImage = resourcesVfs.get("$f/back.$e").readNativeImage()
-        val frontImage = resourcesVfs.get("$f/front.$e").readNativeImage()
+        val leftImage = resourcesVfs.get("skybox/left.jpg").readNativeImage()
+        val rightImage = resourcesVfs.get("skybox/right.jpg").readNativeImage()
+        val topImage = resourcesVfs.get("skybox/top.jpg").readNativeImage()
+        val bottomImage = resourcesVfs.get("skybox/bottom.jpg").readNativeImage()
+        val backImage = resourcesVfs.get("skybox/back.jpg").readNativeImage()
+        val frontImage = resourcesVfs.get("skybox/front.jpg").readNativeImage()
         val groundMap = HeightMapBitmap(bmp)
         val sunX = 0f
         val sunY = 30f
         val sunZ = 0f
         val skyBoxCubeMap = object : CubeMap {
-            override val left = rightImage
-            override val right = leftImage
+            override val left = leftImage
+            override val right = rightImage
             override val top = topImage
             override val bottom = bottomImage
             override val back = backImage
             override val front = frontImage
         }
-        val b = -0.1f
-        val skyboxVertices = floatArrayOf(
-                // positions
-                -1f, 0 + b, +1f,
-                +1f, 0 + b, +1f,
-                -1f, 2 + b, +1f,
-                +1f, 2 + b, +1f,
-                -1f, 0 + b, -1f,
-                +1f, 0 + b, -1f,
-                -1f, 2 + b, -1f,
-                +1f, 2 + b, -1f,
-        )
+
         GlobalScope.launch {
             val kg = Korge { // this: Stage
                 lateinit var cuboide: Shape3D
                 val stage3DView = scene3D {
-                    camera.setPosition(0f, 5f, 5f)
+                    camera.setPosition(0f, 10f, 5f)
 
-                    skyBox(skyBoxCubeMap, skyboxVertices)
+                    skyBox(skyBoxCubeMap)
 
                     val l = light().position(sunX, sunY, sunZ).setTo(Colors.LIGHTGOLDENRODYELLOW)
                     val light = shape3D {
@@ -144,7 +125,7 @@ class GuiTestJvm {
                         }
                     }
 
-                    //val ground = terrain(0f, 0f, 308f, 308f, groundMap, 0.000001f)
+                    val ground = terrain(0f, 0f, 308f, 308f, groundMap, 0.000001f)
 
                     val triangle = shape3D {
                         material(
@@ -221,8 +202,6 @@ class GuiTestJvm {
                         }
                     }
 */
-
-
                     launchImmediately {
                         while (true) {
                             tween(time = 16.seconds) {
@@ -296,11 +275,10 @@ class GuiTestJvm {
                     up {
                         down = false
                     }
-
                 }
             }
         }
-        //Thread.sleep(1000000)
+       // Thread.sleep(1000000)
     }
 
     @Test
@@ -324,7 +302,7 @@ class GuiTestJvm {
                 }
         )
         win.show()
-        //Thread.sleep(1000000)
+       // Thread.sleep(1000000)
     }
 
     @Test
@@ -346,7 +324,7 @@ class GuiTestJvm {
                 }
         )
         win.show()
-        //Thread.sleep(1000000)
+      //  Thread.sleep(1000000)
     }
 
     @Test
@@ -370,7 +348,7 @@ class GuiTestJvm {
                 }
         )
         win.show()
-        // Thread.sleep(1000000)
+       // Thread.sleep(1000000)
     }
 
 
@@ -398,7 +376,7 @@ class GuiTestJvm {
                 }
         )
         win.show()
-        // Thread.sleep(1000000)
+      //  Thread.sleep(1000000)
     }
 
     @Test
@@ -440,7 +418,7 @@ class GuiTestJvm {
         )
         win1.show()
         win2.show()
-        //  Thread.sleep(1000000)
+      //  Thread.sleep(1000000)
     }
 
 }

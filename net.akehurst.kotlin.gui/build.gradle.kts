@@ -74,6 +74,7 @@ subprojects {
             nodejs()
             browser()
         }
+        macosX64()
         sourceSets {
             val commonMain by getting {
                 kotlin.srcDir("$buildDir/generated/kotlin")
