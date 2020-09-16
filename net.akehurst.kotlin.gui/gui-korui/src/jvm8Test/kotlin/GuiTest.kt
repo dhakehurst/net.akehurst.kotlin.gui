@@ -87,45 +87,17 @@ class GuiTestJvm {
 
         lateinit var s: Stage
         val bmp = resourcesVfs.get("Australia.bmp").readBitmap()
-        val f = "skybmp" //"skybox"
-        val e = "bmp" //"jpg"
-        val leftImage = resourcesVfs.get("$f/left.$e").readNativeImage()
-        val rightImage = resourcesVfs.get("$f/right.$e").readNativeImage()
-        val topImage = resourcesVfs.get("$f/top.$e").readNativeImage()
-        val bottomImage = resourcesVfs.get("$f/bottom.$e").readNativeImage()
-        val backImage = resourcesVfs.get("$f/back.$e").readNativeImage()
-        val frontImage = resourcesVfs.get("$f/front.$e").readNativeImage()
         val groundMap = HeightMapBitmap(bmp)
         val sunX = 0f
         val sunY = 30f
         val sunZ = 0f
-        val skyBoxCubeMap = object : CubeMap {
-            override val left = rightImage
-            override val right = leftImage
-            override val top = topImage
-            override val bottom = bottomImage
-            override val back = backImage
-            override val front = frontImage
-        }
-        val b = -0.1f
-        val skyboxVertices = floatArrayOf(
-                // positions
-                -1f, 0 + b, +1f,
-                +1f, 0 + b, +1f,
-                -1f, 2 + b, +1f,
-                +1f, 2 + b, +1f,
-                -1f, 0 + b, -1f,
-                +1f, 0 + b, -1f,
-                -1f, 2 + b, -1f,
-                +1f, 2 + b, -1f,
-        )
         GlobalScope.launch {
             val kg = Korge { // this: Stage
                 lateinit var cuboide: Shape3D
                 val stage3DView = scene3D {
                     camera.setPosition(0f, 5f, 5f)
 
-                    skyBox(skyBoxCubeMap, skyboxVertices)
+                    skyBox(cubeMapFromResourceDirectory("skybox", "jpg"))
 
                     val l = light().position(sunX, sunY, sunZ).setTo(Colors.LIGHTGOLDENRODYELLOW)
                     val light = shape3D {
@@ -144,7 +116,7 @@ class GuiTestJvm {
                         }
                     }
 
-                    //val ground = terrain(0f, 0f, 308f, 308f, groundMap, 0.000001f)
+                    val ground = terrain(0f, 0f, 308f, 308f, groundMap, 0.000001f)
 
                     val triangle = shape3D {
                         material(

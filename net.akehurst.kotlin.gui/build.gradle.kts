@@ -70,9 +70,19 @@ subprojects {
                 }
             }
         }
-        js("js") {
+        js("js", org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR) {
             nodejs()
-            browser()
+            browser {
+                compilations.all {
+                    kotlinOptions.sourceMap = true
+                    kotlinOptions.suppressWarnings = true
+                }
+                testTask {
+                    useKarma {
+                        useChromeHeadless()
+                    }
+                }
+            }
         }
         macosX64()
         sourceSets {

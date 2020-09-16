@@ -22,11 +22,14 @@ import com.soywiz.korio.async.suspendTest
 import com.soywiz.korio.file.std.resourcesVfs
 import com.soywiz.korma.geom.*
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import net.akehurst.kotlin.gui.core.GuiLayoutFactorySimple
 import net.akehurst.kotlin.gui.core.guiLayout
 import net.akehurst.kotlin.gui.core.guiWindow
 
 import kotlin.test.Test
+import kotlin.time.ExperimentalTime
+import kotlin.time.minutes
 
 class GuiTestCommon {
     /*
@@ -75,6 +78,7 @@ class GuiTestCommon {
         //Thread.sleep(1000000)
     }
 
+    @ExperimentalTime
     @Korge3DExperimental
     @Test
     fun korg3d() = suspendTest {
@@ -281,7 +285,7 @@ class GuiTestCommon {
                 }
             }
         }
-        //Thread.sleep(1000000)
+        delay(10.minutes)
     }
 
     @Test
